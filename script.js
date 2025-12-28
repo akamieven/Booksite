@@ -108,7 +108,7 @@ function openModal(author) {
             <h2 style="margin-bottom:10px;">${author.name}</h2>
             <p style="font-size:0.95rem; color:#555; line-height:1.7; margin-bottom:20px; text-align:justify; padding:0 10px;">${author.bio}</p>
             <hr style="margin:20px 0; opacity:0.1;">
-            <h3 style="margin-bottom:15px; text-align:right;">مختارات من أعماله:</h3>
+            <h3 style="margin-bottom:15px; text-align:right;">إقتباسات</h3>
             ${quotesHTML}
         </div>
     `;
