@@ -88,7 +88,8 @@ function openModal(author) {
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <div style="font-size:0.9rem; color:#666;">
                     <span><i class="fas fa-book"></i> ${q.book}</span>
-                    <span style="margin-right:15px; color:var(--accent-color);">#${q.tag}</span>
+                    
+                    ${q.tag ? `<span style="margin-right:15px; color:var(--accent-color);">#${q.tag}</span>` : ''}
                 </div>
                 
                 <button onclick="copyToClipboard('${q.text.replace(/'/g, "\\'")}', '${author.name}')" 
