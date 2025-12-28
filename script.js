@@ -59,25 +59,31 @@ function openModal(author) {
     // تجهيز الاقتباسات
     let quotesHTML = author.quotes.map(q => `
         <div class="quote-box">
-            "${q.text}"
-            <br><small>#${q.tag}</small>
+            <p class="quote-text">"${q.text}"</p>
+            
+            <div class="quote-info" style="margin-top: 10px; font-size: 0.9rem; color: #666;">
+                ${q.book ? `<span><i class="fas fa-book"></i> ${q.book}</span>` : ''}
+                
+                ${q.tag ? `<span style="margin-right: 15px; color: var(--accent-color);">#${q.tag}</span>` : ''}
+            </div>
         </div>
     `).join('');
 
-    // وضع المحتوى داخل النافذة
+    // وضع المحتوى داخل النافذة (نفس الكود السابق لا تغيير هنا)
     modalBody.innerHTML = `
         <div style="text-align: center">
             <img src="${author.image}" class="author-img" style="width: 120px; height: 120px;">
             <h2>${author.name}</h2>
             <p style="margin: 15px 0; color: #777;">${author.bio}</p>
             <hr style="margin: 20px 0; opacity: 0.2">
-            <h3>اقتباسات مختارة:</h3>
-            ${quotesHTML}
+            <div style="text-align: right;"> ${quotesHTML}
+            </div>
         </div>
     `;
     
     modal.style.display = 'flex';
 }
+
 
 closeBtn.onclick = () => modal.style.display = 'none';
 
