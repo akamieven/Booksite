@@ -35,6 +35,16 @@ nav {
 .logo { 
     font-size:  2.5rem; font-weight: bold; color: var(--accent-color); font-family: 'Amiri', serif;
  }
+button[onclick^="copyToClipboard"]:hover {
+    background-color: var(--accent-color) !important;
+    color: white !important;
+    transition: 0.3s;
+}
+
+/* تحسين شكل التنبيه في الموبايل */
+.dark-mode .quote-box {
+    background: rgba(255, 255, 255, 0.05) !important;
+}
 
 .authors-grid {
     display: grid;
