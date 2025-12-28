@@ -94,10 +94,11 @@ function openModal(author) {
                     ${q.tag ? `<span style="margin-right:15px; color:var(--accent-color);">#${q.tag}</span>` : ''}
                 </div>
                 
-                <button onclick="copyToClipboard('${q.text.replace(/'/g, "\\'")}', '${author.name}')" 
-                        style="background:none; border:1px solid var(--accent-color); color:var(--accent-color); padding:4px 10px; border-radius:5px; cursor:pointer; font-size:0.8rem;">
-                    <i class="fas fa-copy"></i> نسخ
-                </button>
+              <button onclick="copyToClipboard(this.parentElement.previousElementSibling.innerText, '${author.name}')" 
+        style="background:none; border:1px solid var(--accent-color); color:var(--accent-color); padding:4px 10px; border-radius:5px; cursor:pointer; font-size:0.8rem;">
+    <i class="fas fa-copy"></i> نسخ
+</button>
+
             </div>
         </div>
     `).join('');
@@ -135,9 +136,8 @@ function copyToClipboard(text, author) {
     
     // استخدام مكتبة المتصفح للنسخ
     navigator.clipboard.writeText(fullText).then(() => {
-        // يمكنك استبدال alert بتصميم أجمل لاحقاً
-        alert("تم النسخ");
+        alert("تم النسخ!");
     }).catch(err => {
-        console.error('فشل النسخ: ', err);
+        console.error('خطأ في النسخ:', err);
     });
 }
