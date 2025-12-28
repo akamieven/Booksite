@@ -1,70 +1,96 @@
-:root{
-  --bg:#FAFAF8;
-  --card:#FFFFFF;
-  --text:#222222;
-  --muted:#6B6B6B;
-  --accent:#2B7A78;
-  --radius:12px;
-  --max-width:1100px;
+:root {
+    /* الألوان للوضع الفاتح */
+    --bg-color: #f9f9f9;
+    --card-bg: #ffffff;
+    --text-color: #333333;
+    --accent-color: #d35400; /* لون برتقالي أنيق */
+    --shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;font-family:"Cairo",system-ui,-apple-system,"Segoe UI",Roboto,Arial;
-  background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;
-  direction:rtl;
+
+/* الألوان للوضع الداكن */
+body.dark-mode {
+    --bg-color: #1a1a1a;
+    --card-bg: #2d2d2d;
+    --text-color: #e0e0e0;
+    --shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
-.page{display:flex;flex-direction:column;min-height:100vh}
-.site-header{
-  display:flex;align-items:center;justify-content:space-between;padding:18px;
-  gap:12px;max-width:var(--max-width);margin:0 auto;width:100%;
+
+* { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.3s, color 0.3s; }
+
+body {
+    font-family: 'Cairo', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
 }
-.brand{display:flex;align-items:center;gap:12px}
-.logo{
-  width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#1E6FBF);
-  color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:"Merriweather";
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 5%;
+    background: var(--card-bg);
+    box-shadow: var(--shadow);
 }
-.brand-text .title{font-family:"Merriweather";font-size:18px}
-.brand-text .subtitle{font-size:12px;color:var(--muted)}
 
-.controls{display:flex;align-items:center;gap:12px}
-.search-wrap{min-width:260px;max-width:640px;width:40%}
-.search{width:100%;padding:10px 12px;border-radius:10px;border:0;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
-.btn{background:var(--accent);color:#fff;border:0;padding:8px 12px;border-radius:8px;cursor:pointer}
-.btn.outline{background:transparent;color:var(--text);border:1px solid rgba(0,0,0,0.06)}
+.logo { font-size: 1.5rem; font-weight: bold; color: var(--accent-color); font-family: 'Amiri', serif; }
 
-.container{max-width:var(--max-width);margin:18px auto;padding:0 18px;flex:1}
-.hero{background:linear-gradient(90deg, rgba(43,122,120,0.06), rgba(30,111,191,0.03));padding:22px;border-radius:14px}
-.hero-quote{font-family:"Merriweather";font-size:22px}
-.hero-meta{color:var(--muted);margin-top:8px;font-size:14px}
+.authors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* متجاوب مع الموبايل والكمبيوتر */
+    gap: 20px;
+    padding: 2rem 5%;
+}
 
-.books-list{display:flex;gap:12px;overflow:auto;padding:10px 0;margin:8px 0}
-.book-card{min-width:140px;background:var(--card);padding:10px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.04);display:flex;gap:10px;align-items:center;cursor:pointer}
-.book-cover{width:48px;height:68px;background:#eee;border-radius:6px;flex-shrink:0}
+.author-card {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: transform 0.3s;
+}
 
-.section-head{display:flex;align-items:center;justify-content:space-between}
-.filters{display:flex;gap:8px;align-items:center}
+.author-card:hover { transform: translateY(-5px); }
 
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:12px}
-.quote-card{background:var(--card);padding:16px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.04);display:flex;flex-direction:column;gap:10px}
-.quote-text{font-family:"Merriweather";font-size:18px}
-.quote-meta{font-size:13px;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
-.icon-btn{background:transparent;border:0;cursor:pointer;font-size:18px}
+.author-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+    border: 3px solid var(--accent-color);
+}
 
-.site-footer{text-align:center;padding:18px;color:var(--muted);font-size:14px}
+/* تنسيق النافذة المنبثقة */
+.modal {
+    display: none; /* مخفية افتراضياً */
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    justify-content: center;
+    align-items: center;
+}
 
-/* modal */
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:60}
-.modal{background:var(--card);max-width:720px;width:100%;border-radius:12px;padding:18px}
-.modal-header{display:flex;justify-content:space-between;align-items:center}
-.modal-quote{font-family:"Merriweather";font-size:20px;margin:12px 0}
-.modal-ref{color:var(--muted);font-size:14px;margin-bottom:12px}
-.modal-actions{display:flex;gap:8px;flex-wrap:wrap}
-.similar-list{margin-top:12px;color:var(--muted)}
+.modal-content {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 600px;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+}
 
-/* responsive */
-@media (max-width:900px){
-  .controls{flex-direction:column;align-items:flex-end}
-  .search-wrap{width:100%}
-  .brand-text .title{font-size:16px}
+.close-btn { position: absolute; left: 20px; top: 10px; font-size: 30px; cursor: pointer; }
+
+/* تنسيق الاقتباسات داخل المودال */
+.quote-box {
+    border-right: 4px solid var(--accent-color);
+    background: rgba(0,0,0,0.03);
+    padding: 15px;
+    margin: 10px 0;
+    font-family: 'Amiri', serif;
+    font-size: 1.2rem;
 }
