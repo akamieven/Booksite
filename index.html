@@ -3,34 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>موقع اقتباسات</title>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital@0;1&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>AkamiEven - إقتباسات</title>
+
+    <!-- خطوط جوجل -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+
+    <!-- ملف CSS الأساسي -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <header>
+        <nav class="navbar">
+    <div class="logo-container">
+  <video autoplay loop muted playsinline class="logo-video">
+    <source src="akamilogo.mp4" type="video/mp4">
+    متصفحك لا يدعم تشغيل الفيديو.
+  </video>
+</div>
 
-    <nav>
-      <div class="logo">AkamiEven</div>
+            <div class="search-box">
+                <label for="searchInput" class="search-label">
+                  <span class="material-symbols-outlined">search</span>
+                </label>
+                <input type="text" id="searchInput" placeholder="ابحث عن كاتب..." aria-label="ابحث عن كاتب">
+            </div>
 
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="ابحث عن كاتب...">
-            <i class="fas fa-search"></i>
-        </div>
-        <button id="themeToggle" title="تغيير الوضع"><i class="fas fa-moon"></i></button>
-    </nav>
+            <button id="themeToggle" title="تغيير الوضع" aria-label="تغيير الوضع بين فاتح أو مظلم">
+                <span id="themeIcon" class="material-symbols-outlined">dark_mode</span>
+            </button>
+        </nav>
+    </header>
 
     <main>
         <h2 class="section-title">أبرز الكُتَّاب</h2>
-        <div class="authors-grid" id="authorsContainer">
-            </div>
+        <div class="authors-grid" id="authorsContainer" aria-live="polite">
+            <!-- يتم تعبئته ديناميكياً -->
+        </div>
     </main>
 
-    <div id="authorModal" class="modal">
+    <!-- نافذة المؤلف -->
+    <div id="authorModal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="modalTitle" aria-describedby="modalDescription">
         <div class="modal-content">
-            <span class="close-btn">&times;</span>
+            <button id="closeModal" class="modal-close-btn" aria-label="إغلاق النافذة">
+                <span class="material-symbols-outlined">close</span>
+            </button>
             <div id="modalBody">
-                </div>
+                <!-- المحتوى يضاف ديناميكيًا -->
+            </div>
         </div>
     </div>
 
