@@ -80,27 +80,38 @@ function renderAuthors(filterText = "") {
 function openModal(author) {
     const modal = document.getElementById('authorModal');
     const modalBody = document.getElementById('modalBody');
-    
+
     let quotesHTML = author.quotes.map(q => `
-        <div class="quote-box" style="margin-bottom:15px; border-right:4px solid orange; padding:10px; background:#f0f0f010">
-            <p style="font-size:1.1rem; margin-bottom:5px;">"${q.text}"</p>
-            <small style="color:gray;"><i class="fas fa-book"></i> ${q.book || 'بدون مصدر'} | #${q.tag || 'عام'}</small>
+        <div class="quote-box" style="margin-bottom:20px; border-right:4px solid var(--accent-color); padding:15px; background:rgba(0,0,0,0.03); text-align:right; position:relative;">
+            <p style="font-family:'Amiri', serif; font-size:1.2rem; line-height:1.6; margin-bottom:10px;">"${q.text}"</p>
+            
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div style="font-size:0.9rem; color:#666;">
+                    <span><i class="fas fa-book"></i> ${q.book}</span>
+                    <span style="margin-right:15px; color:var(--accent-color);">#${q.tag}</span>
+                </div>
+                
+                <button onclick="copyToClipboard('${q.text.replace(/'/g, "\\'")}', '${author.name}')" 
+                        style="background:none; border:1px solid var(--accent-color); color:var(--accent-color); padding:4px 10px; border-radius:5px; cursor:pointer; font-size:0.8rem;">
+                    <i class="fas fa-copy"></i> نسخ
+                </button>
+            </div>
         </div>
     `).join('');
 
     modalBody.innerHTML = `
         <div style="text-align: center">
-            <img src="${author.image}" style="width:100px; height:100px; border-radius:50%; object-fit:cover;">
-            <h2 style="margin-top:10px;">${author.name}</h2>
-            <p style="font-size:0.9rem; color:#888; margin:15px 0;">${author.bio}</p>
+            <img src="${author.image}" style="width:120px; height:120px; border-radius:50%; object-fit:cover; border:3px solid var(--accent-color); margin-bottom:15px;">
+            <h2 style="margin-bottom:10px;">${author.name}</h2>
+            <p style="font-size:0.95rem; color:#555; line-height:1.7; margin-bottom:20px; text-align:justify; padding:0 10px;">${author.bio}</p>
             <hr style="margin:20px 0; opacity:0.1;">
-            <div style="text-align: right;">
-                ${quotesHTML}
-            </div>
+            <h3 style="margin-bottom:15px; text-align:right;">مختارات من أعماله:</h3>
+            ${quotesHTML}
         </div>
     `;
     modal.style.display = 'flex';
 }
+
 
 // إغلاق النافذة
 document.querySelector('.close-btn').onclick = () => {
@@ -116,3 +127,14 @@ document.getElementById('themeToggle').onclick = () => {
 
 // تشغيل عند التحميل
 window.onload = () => renderAuthors();
+function copyToClipboard(text, author) {
+    const fullText = `"${text}" \n— ${author}`;
+    
+    // استخدام مكتبة المتصفح للنسخ
+    navigator.clipboard.writeText(fullText).then(() => {
+        // يمكنك استبدال alert بتصميم أجمل لاحقاً
+        alert("تم نسخ الاقتباس إلى الحافظة!");
+    }).catch(err => {
+        console.error('فشل النسخ: ', err);
+    });
+}
