@@ -32,8 +32,19 @@ nav {
     box-shadow: var(--shadow);
 }
 
-.logo { font-size: 1.5rem; font-weight: bold; color: var(--accent-color); font-family: 'Amiri', serif; }
-
+.logo { 
+    width: 100%;
+    max-width: 300px; /* أقصى عرض للفيديو */
+    overflow: hidden;
+    display: flex;
+    justify-content: right;
+    align-items: right;
+ }
+.logo video {
+    width: 100%;
+    height: auto;
+    border-radius: 3px; /* اختياري: لجعل الزوايا منحنية */
+}
 .authors-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* متجاوب مع الموبايل والكمبيوتر */
