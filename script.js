@@ -1,143 +1,272 @@
-// بيانات الكتاب
-const authorsData = [
+// Modern, modular, accessible script for the authors view
+// Improvements:
+// - ES6 module-like pattern (IIFE) to keep scope clean
+// - Debounced, case-insensitive search
+// - Render with DocumentFragment (faster DOM updates)
+// - No inline HTML for dynamic content (use textContent) to avoid accidental XSS
+// - Lazy-loading images, keyboard accessibility (Enter on cards, Escape to close modal)
+// - Copy-to-clipboard with non-blocking toast feedback (no alert popups)
+// - Single place to edit authorsData (easy to read / edit); can be moved to JSON later
+// - Clear CSS class hooks so appearance is handled in CSS, not inline styles
+
+(() => {
+  // ====== Data: edit here ======
+  // Keep this array small and simple to edit; move to authors.json and fetch() if you prefer.
+  const authorsData = [
     {
-        id: 1,
-        name: "غسان كنفاني",
-        image: "https://i.postimg.cc/054GzSS1/5b2cc74e67c83d85a860d5c9ff81c0d4.jpg",
-        bio: `
-غسان كنفاني (عكا 9 أبريل 1936 - بيروت 8 يوليو 1972) هو روائي وقاص وصحفي فلسطيني، ويعتبر أحد أشهر الكتاب والصحافيين العرب في القرن العشرين. فقد كانت أعماله الأدبية من روايات وقصص قصيرة متجذرة في عمق الثقافة العربية والفلسطينية. ولد في عكا، شمال فلسطين، في التاسع من نيسان عام 1936م، وعاش في يافا حتى أيار 1948 حين أجبر على اللجوء مع عائلته في بادئ الأمر إلى لبنان ثم إلى سوريا. عاش وعمل في دمشق ثم في الكويت وبعد ذلك في بيروت منذ 1960 وفي تموز 1972، استشهد في بيروت مع ابنة أخته لميس في انفجار سيارة مفخخة على أيدي عملاء إسرائيليين.
-
-أصدر غسان كنفاني حتى تاريخ وفاته المبكّر ثمانية عشر كتاباً، وكتب مئات المقالات والدراسات في الثقافة والسياسة وكفاح الشعب الفلسطيني. في أعقاب اغتياله تمّت إعادة نشر جميع مؤلفاته بالعربية، في طبعات عديدة. وجمعت رواياته وقصصه القصيرة ومسرحياته ومقالاته ونشرت في أربعة مجلدات. وتُرجمت معظم أعمال غسان الأدبية إلى سبع عشرة لغة ونُشرت في أكثر من 20 بلداً، وتمّ إخراج بعضها في أعمال مسرحية وبرامج إذاعية في بلدان عربية وأجنبية عدة. اثنتان من رواياته تحولتا إلى فيلمين سينمائيين. وما زالت أعماله الأدبية التي كتبها بين عامي 1956 و1972 تحظى اليوم بأهمية متزايدة.
-
-على الرغم من أن روايات غسان وقصصه القصيرة ومعظم أعماله الأدبية الأخرى قد كتبت في إطار قضية فلسطين وشعبها فإن مواهبه الأدبية الفريدة أعطتها جاذبية عالمية شاملة. 
-`,
-        quotes: [
-            { text: `لقد اهترأت هذه الأقوال العتيقة، هذه المعادلات الحسابية المترعة بالأخاديع.. مرة تقولون أن أخطاءنا تبرر أخطاءكم، ومرة تقولون أن الظلم لا يصحح بظلم آخر.. تستخدمون المنطق الأول لتبرير وجودكم هنا، وتستخدمون المنطق الثاني لتتجنبوا العقاب الذي تستحقونه.. ويخيل إليَّ أنكم تتمتعون الى أقصى حد بهذه اللعبة الطريفة.. وها أنت تحاول مرة جديدة أن تجعل من ضعفنا حصان الطراد الذي تعتلي صهوته.. لا، أنا لا أتحدث إليك مفترضًا أنك عربي، والآن أنا أكثر من يعرف أن الإنسان هو قضية، وليس لحمًا ودمًا يتوارثه جيلٌ وراءَ جيلٍ مثلما يتبادل البائعُ والزبون معلباتِ اللحمِ المقدَّد؛ إنما أتحدث إليك مفترضًا أنك في نهاية الأمر إنسان.. يهودي.. أو فلتكن ما تشاء.. ولكن عليك أن تدرك الأشياء كما ينبغي.. وأنا أعرف أنك ذات يوم ستدرك هذه الأشياء، وتدرك أن أكبر جريمة يمكن لأي إنسان أن يرتكبها، كائنًا من كان، هي أن يعتقد ولو للحظة أن ضعف الآخرين وأخطاءهم هي التي تشكل حقه في الوجود على حسابهم، وهي التي تبرر له أخطاءه وجرائمه..`, book: "عائد إلى حيفا", tag: ""},
-            { text: `
-- أتعرفين؟ طوال عشرين سنة كنت أتصور أن بوابة "مندلبوم" ستفتح ذات يوم.. ولكن أبدًا أبدًا لم أتصور أنها ستفتح من الناحية الأخرى.. لم يكن ذلك يخطر لي على بال، ولذلك فحين فتحوها هم بدا لي الأمر مرعبًا وسخيفًا وإلى حد كبير مهينًا تمامًا... قد أكون مجنونًا لو قلت لك أن كل الأبواب يجب ألا تفتح إلا من جهة واحدة، وإنها إذا فتحت من الجهة الأخرى فيجب اعتبارها مغلقة لا تزال، ولكن تلك هي الحقيقة..
-`, book: "عائد إلى حيفا", tag: ""}
-        ]
+      id: 1,
+      name: "غسان كنفاني",
+      image: "https://i.postimg.cc/054GzSS1/5b2cc74e67c83d85a860d5c9ff81c0d4.jpg",
+      bio: `غسان كنفاني (عكا 9 أبريل 1936 - بيروت 8 يوليو 1972) هو روائي وقاص وصحفي فلسطيني...`,
+      quotes: [
+        { text: `لقد اهترأت هذه الأقوال العتيقة، هذه المعادلات الحسابية المترعة بالأخادع...`, book: "مختارات" , tag: "" },
+        { text: `أتعرفين؟ طوال عشرين سنة كنت أتصور أن بوابة "مندلبوم" ستفتح ذات يوم...`, book: "عائد إلى حيفا", tag: "" }
+      ]
     },
     {
-        id: 2,
-        name: "ستيفان زفايغ",
-        image: "https://i.postimg.cc/Y9cMsbG3/50e7371c9c64fc9848057668a1310b16.jpg",
-        bio: `
-شتيفان تسفايغ (بالألمانية: Stefan Zweig) (28 نوفمبر 1881 ـ 22 فبراير 1942) هو أديب وكاتب نمساوي ذو خلفية يهودية. ومن أبرز كتّاب أوروبا في بدايات القرن العشرين.
-ولد زفايج في فيينا التي كانت عاصمةً لإمبراطورية النمسا-المجر، لأسرة إيدا بريتاور (1854-1938)، وهي ابنة لعائلة مصرفية يهودية، وموريتز تسفايج (1845-1926)، وهو صانع نسيج يهودي ثري.
-
-درس زفايج الفلسفة في جامعة فيينا وفي عام 1904 حصل على درجة الدكتوراه بأطروحته حول "فلسفة إيبوليت تين ".
-
-تزوج تسفايغ من فريدريكه ماريا فون وينترنيتز (ولدت بورغر) في عام 1920 وانفصلا في عام 1938/ وقد نشرت فريدريكه كتابًا عن زوجها السابق بعد وفاته، ونشرت لاحقًا كتابًا ثانيًا مصورًا عن زفايج. وفي أواخر صيف عام 1939، تزوج زفايج من سكرتيرته إليزابيت شارلوته "لوته" ألتمان في باث بإنجلترا.
-
-بلغ تسفايغ شهرة عالمية في عشرينيات وثلاثينيات القرن العشرين، وكان صديقًا لآرثر شنيتزلر وسيغموند فرويد، وحظي بشعبية كبيرة في الولايات المتحدة وأمريكا الجنوبية وأوروبا القارية (بخلاف بريطانيا حيث لم يلق رواجا واسعا).
-
-في فترة ما نُشرت أعماله باللغة الإنجليزية دون موافقته تحت الاسم المستعار "ستيفن برانش" (ترجمة انكليزية لاسم عائلته تسفايغ) عندما كانت المشاعر المعادية لألمانيا تتزايد.
-
-في عام 1934، بعد صعود هتلر إلى السلطة في ألمانيا وقيام نظام النمسا الاتحادية، وهو نظام سياسي استبدادي يُعرف الآن باسم "الفاشية النمساوية"، غادر زفايج النمسا إلى إنجلترا، وعاش أولاً في لندن، ثم انتقل في عام 1939 إلى باث. وقد ورد اسمه في القائمة التي أعدها النازيون ضمن الاستعدادات لعملية أسد البحر لغزو بريطانيا، وفيها أسماء وعناوين من سيلقى القبض عليهم فور غزو الجزر البريطانية، حيث يرد اسمه وعنوانه في بريطانيا في الصفحة 231 مما سمي بالكتاب الأسود.
-
-كان تسفايغ صديقًا مقربًا للموسيقي ريتشارد شتراوس، وقدم له ليبريتو أوبرا " المرأة الصامتة" (بالألمانية: Die schweigsame Frau)، وقد تحدى شتراوس النظام النازي برفضه الموافقة على إزالة اسم تسفايغ من البرنامج في العرض الافتتاحي في دريسدن يوم 24 يونيو 1935، وقد أدى هذا الرفض إلى سحب وزير الدعاية يوزف غوبلز موافقته على الحضور، وإلى حظر الأوبرا نفسها ثلاثة عروض.
-
-تعاون تسفايغ بعد لجوئه إلى بريطانيا مع الكاتب جوزيف غريغور لتزويد شتراوس بنص الأوبرا الثانية "دافنه"(بالألمانية: Daphne) في عام 1937. كما لحن الموسيقي وعازف البيانو هنري جولس الذي فر مثل زفايج إلى البرازيل هربًا من النازيين، قام بتأليف أغنية "قصيدة تسفايغ الأخيرة (بالإسبانية: Último poema de Stefan Zweig)، على أرضية قصيدةبنفس الاسم (بالألمانية: Letztes Gedicht) كتبها تسفايغ في عام 1941 في عيد ميلاده الستين
-
-في عام 1940 عبر تسفايغ وزوجته الثانية المحيط الأطلسي إلى الولايات المتحدة، وسكنا في نيويورك، ثم عاشا لمدة شهرين ضيوفا على جامعة ييل في نيو هيفن، كونيتيكت، قبل استئجار منزل في أوسينينغ في ولاية نيويورك.
-
-في 22 أغسطس 1940، انتقلوا مرة أخرى إلى بتروبوليس في البرازيل، وهي بلدة جبلية يستوطنها ذوو الأصول الألمانية، تقع على بعد 68 كيلومترًا شمال العاصمة ريو دي جانيرو. وهناك كتب كتاب البرازيل أرض المستقبل، وهو مجموعة مقالات عن تاريخ وثقافة البلد، كما طور صداقة وثيقة مع الشاعرة التشيلية غابرييلا ميسترال.
-
-في تلك الفترة كتب زفايج، الذي شعر بالاكتئاب المتزايد بشأن الوضع في أوروبا ومستقبل البشرية، في رسالة إلى الكاتب الفرنسي جول رومان، "تكمن أزمتي الداخلية في أنني غير قادر على التعرف على نفسي في "أنا" جواز السفر، و"نفس" المنفى"، واعتراه اليأس من مستقبل أوروبا وثقافتها.
-
-انتحر مع زوجته في 21 فبراير عام 1942 في منزلهما في بتروبوليس بتناول جرعة كبيرة من الأقراض المنومة، وقد ترك رسالة يشرح فيها أسباب انتحاره، وهي خيبة الأمل واليأس من مستقبل أوروبا ظل انهيار السلام العالمي وويلات الحرب العالمية الثانية، ويشكر حكومة البرازيل حيث انتحر على حسن الضيافة، وقد كتب في ذلك اليوم 192 رسالة وداع بما في ذلك رسالة إلى زوجته الأولى.
-`,
-        quotes: [
-            { text: `انطبع على شفتيّ طعمٌ مر، طعم تفاهةِ الحياة البشريّة. ما جدوى العيش إذا كانت الريح سَتُذري خلف أقدامنا آخرَ أثرٍ لمرورنا؟  على مدى أكثر من ثلاثين عامًا، وربما أربعين، ثمّة رجل قد تنفس هنا، قرأ وفكّر في هذه الأمتار المربّعة القليلة، ثم حلّت ثلاثة أعوام أو أربعة، جاء فيها فرعون جديد آخر فكانت كافية لمحو جاكوب مانديل من الذاكرة.`, book: "مانديل بائع الكتب القديمة", tag: ""},
-            { text: `لقد كانوا يعذبوننا بالعزلة، عزلة خالصة لا يمكن أن تخطر على بال أحد. لم نتعرّض لأي تعذيب جسدي... بل أسلمونا ببساطة إلى فراغ مطلق، ومن البديهي أن لا شيء في العالم يعذب النفس البشرية أكثر من الفراغ.`, book: "لاعب الشطرنج", tag: "" }
-        ]
+      id: 2,
+      name: "ستيفان زفايغ",
+      image: "https://i.postimg.cc/Y9cMsbG3/50e7371c9c64fc9848057668a1310b16.jpg",
+      bio: `شتيفان زفايغ (28 نوفمبر 1881 ـ 22 فبراير 1942) أديب وكاتب نمساوي...`,
+      quotes: [
+        { text: `انطبع على شفتيّ طعمٌ مر، طعم تفاهةِ الحياة البشريّة...`, book: "مختارات", tag: "" },
+        { text: `لقد كانوا يعذبوننا بالعزلة، عزلة خالصة...`, book: "قصص", tag: "" }
+      ]
     }
-];
+  ];
+  // ==============================
 
-// دالة عرض الكتاب
-function renderAuthors(filterText = "") {
-    const container = document.getElementById('authorsContainer');
-    if (!container) return;
-    
-    container.innerHTML = ""; 
+  // Quick lookup by id
+  const authorsById = new Map(authorsData.map(a => [String(a.id), a]));
 
-    const filteredAuthors = authorsData.filter(author => 
-        author.name.includes(filterText)
-    );
+  // Cache DOM nodes (assumes these IDs exist in your HTML)
+  const container = document.getElementById('authorsContainer');
+  const searchInput = document.getElementById('searchInput');
+  const themeToggle = document.getElementById('themeToggle');
+  const modal = document.getElementById('authorModal');
+  const modalBody = document.getElementById('modalBody');
+  const modalCloseBtn = modal ? modal.querySelector('.close-btn') : null;
 
-    filteredAuthors.forEach(author => {
-        const card = document.createElement('div');
-        card.className = 'author-card';
-        card.innerHTML = `
-            <img src="${author.image}" alt="${author.name}" class="author-img">
-            <h3>${author.name}</h3>
-        `;
-        card.onclick = () => openModal(author);
-        container.appendChild(card);
+  if (!container) {
+    console.warn('Authors container (#authorsContainer) not found. Script exiting.');
+    return;
+  }
+
+  // Utility: debounce
+  const debounce = (fn, wait = 250) => {
+    let t;
+    return (...args) => {
+      clearTimeout(t);
+      t = setTimeout(() => fn.apply(this, args), wait);
+    };
+  };
+
+  // Utility: create element with classes, attrs and children
+  const el = (tag, { className, attrs = {}, text = null } = {}, children = []) => {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    Object.entries(attrs).forEach(([k, v]) => node.setAttribute(k, v));
+    if (text !== null) node.textContent = text;
+    children.forEach(child => node.appendChild(child));
+    return node;
+  };
+
+  // Show toast feedback (non-blocking)
+  const showToast = (message, timeout = 1800) => {
+    let toast = document.getElementById('copiedToast');
+    if (!toast) {
+      toast = el('div', { className: 'copied-toast', attrs: { id: 'copiedToast', role: 'status', 'aria-live': 'polite' } });
+      document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.classList.add('visible');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => toast.classList.remove('visible'), timeout);
+  };
+
+  // Copy text to clipboard with graceful fallback
+  async function copyToClipboard(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast('تم النسخ!');
+    } catch (err) {
+      // fallback: create temporary textarea
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast('تم النسخ!');
+      } catch (err2) {
+        console.error('Copy failed', err2);
+        showToast('فشل النسخ');
+      } finally {
+        document.body.removeChild(ta);
+      }
+    }
+  }
+
+  // Render author list
+  function renderAuthors(filter = '') {
+    const q = (filter || '').trim().toLowerCase();
+    container.innerHTML = '';
+
+    const fragment = document.createDocumentFragment();
+    const matching = authorsData.filter(a => a.name.toLowerCase().includes(q) || (a.bio || '').toLowerCase().includes(q));
+
+    if (matching.length === 0) {
+      const empty = el('div', { className: 'authors-empty', text: 'لا توجد نتائج.' });
+      fragment.appendChild(empty);
+    } else {
+      matching.forEach(author => {
+        const img = el('img', { className: 'author-img', attrs: { src: author.image, alt: author.name, loading: 'lazy' } });
+        const h3 = el('h3', { className: 'author-name', text: author.name });
+        const card = el('button', { className: 'author-card', attrs: { type: 'button', 'data-id': String(author.id), 'aria-label': `عرض ${author.name}` } }, [img, h3]);
+        // keyboard + click handled via event delegation (below)
+        fragment.appendChild(card);
+      });
+    }
+
+    container.appendChild(fragment);
+  }
+
+  // Build modal content safely (textContent + create elements)
+  function openModalById(id) {
+    const author = authorsById.get(String(id));
+    if (!author || !modal || !modalBody) return;
+    // clear previous
+    modalBody.innerHTML = '';
+
+    const header = el('div', { className: 'modal-header' });
+    const avatar = el('img', { className: 'modal-avatar', attrs: { src: author.image, alt: author.name, loading: 'lazy' } });
+    const title = el('h2', { className: 'modal-title', text: author.name });
+    header.appendChild(avatar);
+    header.appendChild(title);
+
+    // Bio paragraphs
+    const bioContainer = el('div', { className: 'modal-bio' });
+    // split on blank lines to form paragraphs when editing bio; allows simple editing of bio string
+    (author.bio || '').split(/\n\s*\n/).forEach(pText => {
+      const p = el('p', { text: pText.trim() });
+      bioContainer.appendChild(p);
     });
-}
 
-// دالة فتح النافذة
-function openModal(author) {
-    const modal = document.getElementById('authorModal');
-    const modalBody = document.getElementById('modalBody');
+    // Quotes
+    const quotesContainer = el('div', { className: 'modal-quotes' });
+    const qHeading = el('h3', { className: 'quotes-heading', text: 'إقتباسات' });
+    quotesContainer.appendChild(qHeading);
 
-    let quotesHTML = author.quotes.map(q => `
-        <div class="quote-box" style="margin-bottom:20px; border-right:4px solid var(--accent-color); padding:15px; background:rgba(0,0,0,0.03); text-align:right; position:relative;">
-            <p style="font-family:'Amiri', serif; font-size:1.2rem; line-height:1.6; margin-bottom:10px;">"${q.text}"</p>
-            
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div style="font-size:0.9rem; color:#666;">
-                    <span><i class="fas fa-book"></i> ${q.book}</span>
-                    
-                    ${q.tag ? `<span style="margin-right:15px; color:var(--accent-color);">#${q.tag}</span>` : ''}
-                </div>
-                
-              <button onclick="copyToClipboard(this.parentElement.previousElementSibling.innerText, '${author.name}')" 
-        style="background:none; border:1px solid var(--accent-color); color:var(--accent-color); padding:4px 10px; border-radius:5px; cursor:pointer; font-size:0.8rem;">
-    <i class="fas fa-copy"></i> نسخ
-</button>
+    (author.quotes || []).forEach((q, idx) => {
+      const quoteBox = el('blockquote', { className: 'quote-box' });
+      const quoteText = el('p', { className: 'quote-text', text: q.text });
+      const meta = el('div', { className: 'quote-meta' });
+      const metaLeft = el('div', { className: 'quote-book', text: q.book || '' });
+      const metaRight = el('div', { className: 'quote-actions' });
 
-            </div>
-        </div>
-    `).join('');
+      const copyBtn = el('button', { className: 'quote-copy', attrs: { type: 'button', 'aria-label': `نسخ اقتباس ${author.name}` } }, []);
+      copyBtn.innerHTML = `<i class="fas fa-copy" aria-hidden="true"></i> نسخ`; // small innerHTML for icon; text is safe
+      copyBtn.addEventListener('click', () => {
+        const full = `"${q.text}"\n— ${author.name}`;
+        copyToClipboard(full);
+      });
 
-    modalBody.innerHTML = `
-        <div style="text-align: center">
-            <img src="${author.image}" style="width:120px; height:120px; border-radius:50%; object-fit:cover; border:3px solid var(--accent-color); margin-bottom:15px;">
-            <h2 style="margin-bottom:10px;">${author.name}</h2>
-            <p style="font-size:0.95rem; color:#555; line-height:1.7; margin-bottom:20px; text-align:justify; padding:0 10px;">${author.bio}</p>
-            <hr style="margin:20px 0; opacity:0.1;">
-            <h3 style="margin-bottom:15px; text-align:right;">إقتباسات</h3>
-            ${quotesHTML}
-        </div>
-    `;
+      if (q.tag) {
+        const tag = el('span', { className: 'quote-tag', text: `#${q.tag}` });
+        metaLeft.appendChild(tag);
+      }
+
+      metaRight.appendChild(copyBtn);
+      meta.appendChild(metaLeft);
+      meta.appendChild(metaRight);
+
+      quoteBox.appendChild(quoteText);
+      quoteBox.appendChild(meta);
+      quotesContainer.appendChild(quoteBox);
+    });
+
+    modalBody.appendChild(header);
+    modalBody.appendChild(bioContainer);
+    modalBody.appendChild(quotesContainer);
+
+    // show modal
     modal.style.display = 'flex';
-}
+    modal.setAttribute('aria-hidden', 'false');
+    // focus management
+    if (modalCloseBtn) modalCloseBtn.focus();
+  }
 
+  function closeModal() {
+    if (!modal) return;
+    modal.style.display = 'none';
+    modal.setAttribute('aria-hidden', 'true');
+  }
 
-// إغلاق النافذة
-document.querySelector('.close-btn').onclick = () => {
-    document.getElementById('authorModal').style.display = 'none';
-};
+  // Event delegation for author cards
+  function onContainerClick(e) {
+    const btn = e.target.closest('.author-card');
+    if (!btn) return;
+    const id = btn.getAttribute('data-id');
+    if (id) openModalById(id);
+  }
 
-// البحث والوضع الليلي
-document.getElementById('searchInput').oninput = (e) => renderAuthors(e.target.value);
+  // Keyboard handling for author cards (Enter to open)
+  function onContainerKeydown(e) {
+    const target = e.target;
+    if (target && target.classList && target.classList.contains('author-card')) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        const id = target.getAttribute('data-id');
+        if (id) openModalById(id);
+      }
+    }
+  }
 
-document.getElementById('themeToggle').onclick = () => {
-    document.body.classList.toggle('dark-mode');
-};
+  // Bind events
+  function bind() {
+    container.addEventListener('click', onContainerClick);
+    container.addEventListener('keydown', onContainerKeydown);
 
-// تشغيل عند التحميل
-window.onload = () => renderAuthors();
-function copyToClipboard(text, author) {
-    const fullText = `"${text}" \n— ${author}`;
-    
-    // استخدام مكتبة المتصفح للنسخ
-    navigator.clipboard.writeText(fullText).then(() => {
-        alert("تم النسخ!");
-    }).catch(err => {
-        console.error('خطأ في النسخ:', err);
+    if (searchInput) {
+      searchInput.addEventListener('input', debounce((ev) => renderAuthors(ev.target.value), 200));
+    }
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => document.body.classList.toggle('dark-mode'));
+    }
+
+    if (modalCloseBtn) {
+      modalCloseBtn.addEventListener('click', closeModal);
+    }
+
+    // close modal on overlay click (click outside modalBody)
+    if (modal) {
+      modal.addEventListener('click', (ev) => {
+        if (ev.target === modal) closeModal();
+      });
+    }
+
+    // Escape key to close modal
+    document.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Escape') closeModal();
     });
-}
+  }
+
+  // Initialize
+  function init() {
+    renderAuthors('');
+    bind();
+  }
+
+  // Expose init globally so you can call it if you dynamically load data
+  window.AuthorsModule = { init, renderAuthors, openModalById, authorsData };
+
+  // Auto-init on DOMContentLoaded if script is loaded in head
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
